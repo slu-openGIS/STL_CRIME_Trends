@@ -238,4 +238,3 @@ Finally, data are written to `data/clean` for plotting and dissemination.
 ```{r}
 write_csv(stLouis, here("data", "clean", "STL_CRIME_Trends.csv"))
 ```
-
