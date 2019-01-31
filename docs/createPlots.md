@@ -127,7 +127,7 @@ yearBreaks <- c(1949, 1955, 1960, 1965, 1970, 1975, 1980, 1985,
 plot <- stLouis %>%
   filter(year >= 1949) %>%
   ggplot(aes(x = year, y = theftRate)) +
-    geom_line(color = "#0000ff", size = 1.5) + 
+    geom_line(color = "#00b300", size = 1.5) + 
     scale_y_continuous(limits = c(0, 15000)) +
     scale_x_continuous(breaks = yearBreaks) +
     labs(title = "Larceny Trend for St. Louis, 1949-2017", 
