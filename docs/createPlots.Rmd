@@ -37,16 +37,16 @@ stLouis <- read_csv(here("data", "clean", "STL_CRIME_Trends.csv"))
 
 ```{r homicide-count}
 yearBreaks <- c(1946, 1950, 1955, 1960, 1965, 1970, 1975, 1980, 1985, 
-                1990, 1995, 2000, 2005, 2010, 2017)
+                1990, 1995, 2000, 2005, 2010, 2015, 2021)
 
 plot <- stLouis %>%
   ggplot(aes(x = year, y = murder)) +
     geom_line(color = "#ff0000", size = 1.5) + 
-    scale_y_continuous(limits = c(0, 350)) +
+    scale_y_continuous(breaks = c(seq(0, 350, by = 50)), limits = c(0, 350)) +
     scale_x_continuous(breaks = yearBreaks) +
-    labs(title = "Homicide Trend for St. Louis, 1946-2017", 
+    labs(title = "Homicide Trend for St. Louis, 1946-2021", 
          subtitle = "Count of Homicides",
-         caption = "Plot by Christopher Prener, Ph.D.\nData via the FBI") +
+         caption = "Plot by Christopher Prener, Ph.D.\nData via the FBI and the St. Louis Post-Dispatch") +
   theme_fivethirtyeight()
 
 ggsave(here("results", "homicide_count.png"), plot,
@@ -59,16 +59,16 @@ plot
 
 ```{r homicide-rate}
 yearBreaks <- c(1946, 1950, 1955, 1960, 1965, 1970, 1975, 1980, 1985, 
-                1990, 1995, 2000, 2005, 2010, 2017)
+                1990, 1995, 2000, 2005, 2010, 2015, 2021)
 
 plot <- stLouis %>%
   ggplot(aes(x = year, y = murderRate)) +
     geom_line(color = "#ff0000", size = 1.5) + 
-    scale_y_continuous(limits = c(0, 70)) +
+    scale_y_continuous(breaks = c(seq(0, 90, by = 15)), limits = c(0, 90)) +
     scale_x_continuous(breaks = yearBreaks) +
-    labs(title = "Homicide Trend for St. Louis, 1946-2017", 
+    labs(title = "Homicide Trend for St. Louis, 1946-2021", 
          subtitle = "Rate per 100,000 Residents",
-         caption = "Plot by Christopher Prener, Ph.D.\nData via the FBI") +
+         caption = "Plot by Christopher Prener, Ph.D.\nData via the FBI and the St. Louis Post-Dispatch") +
   theme_fivethirtyeight()
 
 ggsave(here("results", "homicide_rate.png"), plot,

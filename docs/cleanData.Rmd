@@ -71,6 +71,12 @@ stLouis16 <- read_excel(here("data", "raw", "tables", "rawFBIData-STL-2016.xls")
 stLouis17 <- read_excel(here("data", "raw", "tables", "rawFBIData-STL-2017.xls"), 
                         sheet = 1, col_names = TRUE, col_types = NULL, na = "", 
                         skip = 4)
+stLouis18 <- read_excel(here("data", "raw", "tables", "rawFBIData-STL-2018.xls"), 
+                        sheet = 1, col_names = TRUE, col_types = NULL, na = "", 
+                        skip = 4)
+stLouis19 <- read_excel(here("data", "raw", "tables", "rawFBIData-STL-2019.xls"), 
+                        sheet = 1, col_names = TRUE, col_types = NULL, na = "", 
+                        skip = 4)
 
 # historic population data
 stLouisPop <- read_excel(here("data", "raw", "tables", "moco_totpop_1900_2000.xls"),
@@ -152,15 +158,47 @@ stLouis17 %>%
   contempSubset(year = 2017) -> stLouis17
 ```
 
+#### 2018 Names
+And for 2017:
+
+```{r}
+stLouis18 %>% 
+  contempNames(year = 2018) %>%
+  mutate(year = 2018) %>%
+  contempSubset(year = 2018) -> stLouis18
+```
+
+#### 2019 Names
+And for 2019:
+
+```{r}
+stLouis19 %>% 
+  contempNames(year = 2019) %>%
+  mutate(year = 2019) %>%
+  contempSubset(year = 2019) -> stLouis19
+```
+
+### 2020 and 2021
+The data for 2020 and 2021 will be entered manually:
+
+```{r}
+stLouis20 <- tibble(
+  year = c(2020, 2021),
+  population = c(301578, 293310),
+  murder = c(263, 199)
+)
+```
+
+
 ### Combine
 Once we have these datas' names standardized, we can bind them together and remove the intermediate objects:
 
 ```{r}
 # bind tables
-stLouis15 <- bind_rows(stLouis15, stLouis16, stLouis17)
+stLouis15 <- bind_rows(stLouis15, stLouis16, stLouis17, stLouis18, stLouis19, stLouis20)
 
 # remove intermediate objects
-rm(stLouis16, stLouis17)
+rm(stLouis16, stLouis17, stLouis18, stLouis19, stLouis20)
 ```
 
 ### Crime Counts

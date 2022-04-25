@@ -21,7 +21,7 @@ contempNames <- function(.data, year){
     out %>% 
       rename(rape = rape_revised_definition1) -> out
     
-  } else if (year == 2017){
+  } else if (year %in% c(2017, 2018, 2019)){
     
     out %>%
       rename(rape = rape1) -> out
