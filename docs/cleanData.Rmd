@@ -1,6 +1,6 @@
 ---
 title: "Create Clean Data"
-author: "Your Name"
+author: "Christopher Prener, Ph.D."
 date: '(`r format(Sys.time(), "%B %d, %Y")`)'
 output: 
   github_document: default
@@ -77,6 +77,10 @@ stLouis18 <- read_excel(here("data", "raw", "tables", "rawFBIData-STL-2018.xls")
 stLouis19 <- read_excel(here("data", "raw", "tables", "rawFBIData-STL-2019.xls"), 
                         sheet = 1, col_names = TRUE, col_types = NULL, na = "", 
                         skip = 4)
+
+stLouis20 <- read_excel(here("data", "raw", "tables", "rawFBIData-STL-2020_2021.xlsx"),
+                        sheet = 1, col_names = TRUE, col_types = NULL, na = "") %>%
+  clean_names()
 
 # historic population data
 stLouisPop <- read_excel(here("data", "raw", "tables", "moco_totpop_1900_2000.xls"),
@@ -165,7 +169,8 @@ And for 2017:
 stLouis18 %>% 
   contempNames(year = 2018) %>%
   mutate(year = 2018) %>%
-  contempSubset(year = 2018) -> stLouis18
+  contempSubset(year = 2018) %>%
+  rename(arson = arson2) -> stLouis18
 ```
 
 #### 2019 Names
@@ -175,18 +180,28 @@ And for 2019:
 stLouis19 %>% 
   contempNames(year = 2019) %>%
   mutate(year = 2019) %>%
-  contempSubset(year = 2019) -> stLouis19
+  contempSubset(year = 2019) %>%
+  rename(arson = arson2) -> stLouis19
 ```
 
 ### 2020 and 2021
 The data for 2020 and 2021 will be entered manually:
 
 ```{r}
-stLouis20 <- tibble(
-  year = c(2020, 2021),
-  population = c(301578, 293310),
-  murder = c(263, 199)
-)
+stLouis20 %>%
+  filter(city == "St. Louis") %>%
+  mutate(population = case_when(
+    year == 2020 ~ 301578,
+    year == 2021 ~ 293310
+  )) %>%
+  mutate(murder = ifelse(year == 2021, 199, murder)) %>%
+  rename(
+    agAssault = aggravated_assault,
+    larceny = larceny_theft,
+    mvLarceny = motor_vehicle_theft
+  ) %>%
+  select(year, population, murder, rape, robbery, agAssault, burglary,
+         larceny, mvLarceny, arson) -> stLouis20
 ```
 
 
@@ -262,12 +277,13 @@ We are now able to calculate crime rates for murder, violent crime, property cri
 ```{r}
 stLouis %>%
   mutate(murderRate = (murder/population)*100000) %>%
+  mutate(agAssaultRate = (agAssault/population)*100000) %>%
   mutate(violentRate = (violentTotal/population)*100000) %>%
-  mutate(propertyRate = (propertyTotal/population)*100000) %>%
+  # mutate(propertyRate = (propertyTotal/population)*100000) %>%
   mutate(theftRate = (theftTotal/population)*100000) %>%
   select(year, population, violentTotal, violentRate, murder, murderRate,
-         rape:propertyTotal, propertyRate, theftTotal, theftRate, 
-         everything()) -> stLouis
+         rape, robbery, agAssault, agAssaultRate, propertyTotal, 
+         theftTotal, theftRate, everything()) -> stLouis
 ```
 
 ## Write Data

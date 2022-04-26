@@ -1,7 +1,7 @@
 Create Clean Data
 ================
-Your Name
-(January 31, 2019)
+Christopher Prener, Ph.D.
+(April 26, 2022)
 
 ## Introduction
 
@@ -84,11 +84,18 @@ library(tidyr)        # data wrangling
 library(here)         # file paths
 ```
 
-    ## here() starts at /Users/chris/GitHub/Personal/STL_CRIME_Trends
+    ## here() starts at /Users/prenercg/GitHub/PrenerLab/STL_CRIME_Trends
 
 ``` r
 library(janitor)      # data wrangling
 ```
+
+    ## 
+    ## Attaching package: 'janitor'
+
+    ## The following objects are masked from 'package:stats':
+    ## 
+    ##     chisq.test, fisher.test
 
 ### Functions
 
@@ -127,9 +134,6 @@ stLouis46 %>%
   theftTotal() %>%
   propertyTotal() -> stLouis46
 ```
-
-    ## Warning: Calling `as_tibble()` on a vector is discouraged, because the behavior is likely to change in the future. Use `enframe(name = NULL)` instead.
-    ## This warning is displayed once per session.
 
 ### 1985-2014
 
@@ -205,6 +209,51 @@ stLouis17 %>%
   contempSubset(year = 2017) -> stLouis17
 ```
 
+#### 2018 Names
+
+And for 2017:
+
+``` r
+stLouis18 %>% 
+  contempNames(year = 2018) %>%
+  mutate(year = 2018) %>%
+  contempSubset(year = 2018) %>%
+  rename(arson = arson2) -> stLouis18
+```
+
+#### 2019 Names
+
+And for 2019:
+
+``` r
+stLouis19 %>% 
+  contempNames(year = 2019) %>%
+  mutate(year = 2019) %>%
+  contempSubset(year = 2019) %>%
+  rename(arson = arson2) -> stLouis19
+```
+
+### 2020 and 2021
+
+The data for 2020 and 2021 will be entered manually:
+
+``` r
+stLouis20 %>%
+  filter(city == "St. Louis") %>%
+  mutate(population = case_when(
+    year == 2020 ~ 301578,
+    year == 2021 ~ 293310
+  )) %>%
+  mutate(murder = ifelse(year == 2021, 199, murder)) %>%
+  rename(
+    agAssault = aggravated_assault,
+    larceny = larceny_theft,
+    mvLarceny = motor_vehicle_theft
+  ) %>%
+  select(year, population, murder, rape, robbery, agAssault, burglary,
+         larceny, mvLarceny, arson) -> stLouis20
+```
+
 ### Combine
 
 Once we have these datas’ names standardized, we can bind them together
@@ -212,10 +261,10 @@ and remove the intermediate objects:
 
 ``` r
 # bind tables
-stLouis15 <- bind_rows(stLouis15, stLouis16, stLouis17)
+stLouis15 <- bind_rows(stLouis15, stLouis16, stLouis17, stLouis18, stLouis19, stLouis20)
 
 # remove intermediate objects
-rm(stLouis16, stLouis17)
+rm(stLouis16, stLouis17, stLouis18, stLouis19, stLouis20)
 ```
 
 ### Crime Counts
@@ -296,12 +345,13 @@ property crime (only for a few years at this point), and thefts:
 ``` r
 stLouis %>%
   mutate(murderRate = (murder/population)*100000) %>%
+  mutate(agAssaultRate = (agAssault/population)*100000) %>%
   mutate(violentRate = (violentTotal/population)*100000) %>%
-  mutate(propertyRate = (propertyTotal/population)*100000) %>%
+  # mutate(propertyRate = (propertyTotal/population)*100000) %>%
   mutate(theftRate = (theftTotal/population)*100000) %>%
   select(year, population, violentTotal, violentRate, murder, murderRate,
-         rape:propertyTotal, propertyRate, theftTotal, theftRate, 
-         everything()) -> stLouis
+         rape, robbery, agAssault, agAssaultRate, propertyTotal, 
+         theftTotal, theftRate, everything()) -> stLouis
 ```
 
 ## Write Data
